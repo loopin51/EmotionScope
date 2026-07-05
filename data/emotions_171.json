@@ -1,0 +1,1217 @@
+{
+  "source": "Anthropic (2026), 'Emotion Concepts and their Function in a Large Language Model'",
+  "source_url": "https://transformer-circuits.pub/2026/emotions/index.html",
+  "count": 171,
+  "notes": "cluster + cluster_valence_rank are from the paper's Table 12 (k-means k=10, clusters ordered by valence, 1=most positive). valence/arousal are estimates on [-1,1] following the Russell (1980) convention used in config.py; the paper publishes only figures/correlations for its LLM-judged 1-7 ratings, not per-emotion numbers.",
+  "clusters_ordered_by_valence": [
+    "Exuberant Joy",
+    "Peaceful Contentment",
+    "Compassionate Gratitude",
+    "Competitive Pride",
+    "Playful Amusement",
+    "Depleted Disengagement",
+    "Vigilant Suspicion",
+    "Hostile Anger",
+    "Fear and Overwhelm",
+    "Despair and Shame"
+  ],
+  "emotions": [
+    {
+      "name": "afraid",
+      "valence": -0.7,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "alarmed",
+      "valence": -0.6,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "alert",
+      "valence": 0.1,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "amazed",
+      "valence": 0.5,
+      "arousal": 0.7,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "amused",
+      "valence": 0.7,
+      "arousal": 0.4,
+      "cluster": "Playful Amusement",
+      "cluster_valence_rank": 5
+    },
+    {
+      "name": "angry",
+      "valence": -0.6,
+      "arousal": 0.8,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "annoyed",
+      "valence": -0.4,
+      "arousal": 0.4,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "anxious",
+      "valence": -0.6,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "aroused",
+      "valence": 0.3,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "ashamed",
+      "valence": -0.7,
+      "arousal": 0.2,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "astonished",
+      "valence": 0.3,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "at ease",
+      "valence": 0.6,
+      "arousal": -0.5,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "awestruck",
+      "valence": 0.5,
+      "arousal": 0.7,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "bewildered",
+      "valence": -0.2,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "bitter",
+      "valence": -0.6,
+      "arousal": 0.3,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "blissful",
+      "valence": 0.9,
+      "arousal": 0.5,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "bored",
+      "valence": -0.3,
+      "arousal": -0.5,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "brooding",
+      "valence": -0.3,
+      "arousal": 0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "calm",
+      "valence": 0.3,
+      "arousal": -0.5,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "cheerful",
+      "valence": 0.8,
+      "arousal": 0.5,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "compassionate",
+      "valence": 0.7,
+      "arousal": 0.1,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "contemptuous",
+      "valence": -0.5,
+      "arousal": 0.4,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "content",
+      "valence": 0.6,
+      "arousal": -0.3,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "defiant",
+      "valence": -0.3,
+      "arousal": 0.6,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "delighted",
+      "valence": 0.85,
+      "arousal": 0.55,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "dependent",
+      "valence": -0.2,
+      "arousal": 0.0,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "depressed",
+      "valence": -0.8,
+      "arousal": -0.4,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "desperate",
+      "valence": -0.9,
+      "arousal": 0.9,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "disdainful",
+      "valence": -0.5,
+      "arousal": 0.3,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "disgusted",
+      "valence": -0.6,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "disoriented",
+      "valence": -0.4,
+      "arousal": 0.4,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "dispirited",
+      "valence": -0.6,
+      "arousal": -0.3,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "distressed",
+      "valence": -0.7,
+      "arousal": 0.7,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "disturbed",
+      "valence": -0.6,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "docile",
+      "valence": 0.0,
+      "arousal": -0.4,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "droopy",
+      "valence": -0.3,
+      "arousal": -0.6,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "dumbstruck",
+      "valence": 0.0,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "eager",
+      "valence": 0.6,
+      "arousal": 0.7,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "ecstatic",
+      "valence": 0.95,
+      "arousal": 0.9,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "elated",
+      "valence": 0.9,
+      "arousal": 0.8,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "embarrassed",
+      "valence": -0.5,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "empathetic",
+      "valence": 0.6,
+      "arousal": 0.1,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "energized",
+      "valence": 0.7,
+      "arousal": 0.8,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "enraged",
+      "valence": -0.8,
+      "arousal": 0.9,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "enthusiastic",
+      "valence": 0.8,
+      "arousal": 0.85,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "envious",
+      "valence": -0.5,
+      "arousal": 0.4,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "euphoric",
+      "valence": 0.95,
+      "arousal": 0.85,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "exasperated",
+      "valence": -0.5,
+      "arousal": 0.6,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "excited",
+      "valence": 0.8,
+      "arousal": 0.8,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "exuberant",
+      "valence": 0.85,
+      "arousal": 0.85,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "frightened",
+      "valence": -0.7,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "frustrated",
+      "valence": -0.5,
+      "arousal": 0.6,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "fulfilled",
+      "valence": 0.8,
+      "arousal": 0.0,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "furious",
+      "valence": -0.8,
+      "arousal": 0.9,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "gloomy",
+      "valence": -0.6,
+      "arousal": -0.3,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "grateful",
+      "valence": 0.8,
+      "arousal": 0.2,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "greedy",
+      "valence": -0.3,
+      "arousal": 0.4,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "grief-stricken",
+      "valence": -0.9,
+      "arousal": 0.4,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "grumpy",
+      "valence": -0.4,
+      "arousal": 0.2,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "guilty",
+      "valence": -0.6,
+      "arousal": 0.2,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "happy",
+      "valence": 0.8,
+      "arousal": 0.5,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "hateful",
+      "valence": -0.8,
+      "arousal": 0.7,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "heartbroken",
+      "valence": -0.9,
+      "arousal": 0.3,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "hope",
+      "valence": 0.6,
+      "arousal": 0.3,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "hopeful",
+      "valence": 0.7,
+      "arousal": 0.3,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "horrified",
+      "valence": -0.8,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "hostile",
+      "valence": -0.8,
+      "arousal": 0.7,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "humiliated",
+      "valence": -0.8,
+      "arousal": 0.4,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "hurt",
+      "valence": -0.6,
+      "arousal": 0.3,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "hysterical",
+      "valence": -0.6,
+      "arousal": 0.9,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "impatient",
+      "valence": -0.3,
+      "arousal": 0.5,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "indifferent",
+      "valence": -0.1,
+      "arousal": -0.4,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "indignant",
+      "valence": -0.4,
+      "arousal": 0.6,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "infatuated",
+      "valence": 0.4,
+      "arousal": 0.6,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "inspired",
+      "valence": 0.8,
+      "arousal": 0.5,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "insulted",
+      "valence": -0.5,
+      "arousal": 0.5,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "invigorated",
+      "valence": 0.7,
+      "arousal": 0.75,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "irate",
+      "valence": -0.7,
+      "arousal": 0.8,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "irritated",
+      "valence": -0.4,
+      "arousal": 0.5,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "jealous",
+      "valence": -0.5,
+      "arousal": 0.5,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "joyful",
+      "valence": 0.9,
+      "arousal": 0.7,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "jubilant",
+      "valence": 0.9,
+      "arousal": 0.8,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "kind",
+      "valence": 0.7,
+      "arousal": 0.1,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "lazy",
+      "valence": -0.1,
+      "arousal": -0.6,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "listless",
+      "valence": -0.4,
+      "arousal": -0.6,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "lonely",
+      "valence": -0.7,
+      "arousal": -0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "loving",
+      "valence": 0.9,
+      "arousal": 0.3,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "mad",
+      "valence": -0.6,
+      "arousal": 0.7,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "melancholy",
+      "valence": -0.5,
+      "arousal": -0.2,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "miserable",
+      "valence": -0.8,
+      "arousal": 0.0,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "mortified",
+      "valence": -0.7,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "mystified",
+      "valence": 0.1,
+      "arousal": 0.4,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "nervous",
+      "valence": -0.3,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "nostalgic",
+      "valence": 0.1,
+      "arousal": -0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "obstinate",
+      "valence": -0.3,
+      "arousal": 0.3,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "offended",
+      "valence": -0.5,
+      "arousal": 0.5,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "on edge",
+      "valence": -0.4,
+      "arousal": 0.7,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "optimistic",
+      "valence": 0.7,
+      "arousal": 0.4,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "outraged",
+      "valence": -0.7,
+      "arousal": 0.8,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "overwhelmed",
+      "valence": -0.4,
+      "arousal": 0.7,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "panicked",
+      "valence": -0.7,
+      "arousal": 0.9,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "paranoid",
+      "valence": -0.6,
+      "arousal": 0.6,
+      "cluster": "Vigilant Suspicion",
+      "cluster_valence_rank": 7
+    },
+    {
+      "name": "patient",
+      "valence": 0.4,
+      "arousal": -0.4,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "peaceful",
+      "valence": 0.7,
+      "arousal": -0.6,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "perplexed",
+      "valence": -0.1,
+      "arousal": 0.3,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "playful",
+      "valence": 0.7,
+      "arousal": 0.6,
+      "cluster": "Playful Amusement",
+      "cluster_valence_rank": 5
+    },
+    {
+      "name": "pleased",
+      "valence": 0.7,
+      "arousal": 0.3,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "proud",
+      "valence": 0.8,
+      "arousal": 0.4,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "puzzled",
+      "valence": 0.0,
+      "arousal": 0.3,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "rattled",
+      "valence": -0.4,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "reflective",
+      "valence": 0.0,
+      "arousal": -0.2,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "refreshed",
+      "valence": 0.6,
+      "arousal": -0.2,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "regretful",
+      "valence": -0.5,
+      "arousal": 0.0,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "rejuvenated",
+      "valence": 0.7,
+      "arousal": 0.3,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "relaxed",
+      "valence": 0.6,
+      "arousal": -0.6,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "relieved",
+      "valence": 0.6,
+      "arousal": -0.1,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "remorseful",
+      "valence": -0.5,
+      "arousal": 0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "resentful",
+      "valence": -0.6,
+      "arousal": 0.4,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "resigned",
+      "valence": -0.4,
+      "arousal": -0.4,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "restless",
+      "valence": -0.3,
+      "arousal": 0.4,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "sad",
+      "valence": -0.7,
+      "arousal": -0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "safe",
+      "valence": 0.6,
+      "arousal": -0.4,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "satisfied",
+      "valence": 0.7,
+      "arousal": 0.0,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "scared",
+      "valence": -0.7,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "scornful",
+      "valence": -0.5,
+      "arousal": 0.4,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "self-confident",
+      "valence": 0.7,
+      "arousal": 0.3,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "self-conscious",
+      "valence": -0.3,
+      "arousal": 0.4,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "self-critical",
+      "valence": -0.4,
+      "arousal": 0.2,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "sensitive",
+      "valence": -0.1,
+      "arousal": 0.3,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "sentimental",
+      "valence": 0.4,
+      "arousal": 0.0,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "serene",
+      "valence": 0.7,
+      "arousal": -0.6,
+      "cluster": "Peaceful Contentment",
+      "cluster_valence_rank": 2
+    },
+    {
+      "name": "shaken",
+      "valence": -0.5,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "shocked",
+      "valence": -0.3,
+      "arousal": 0.8,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "skeptical",
+      "valence": -0.2,
+      "arousal": 0.2,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "sleepy",
+      "valence": 0.0,
+      "arousal": -0.7,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "sluggish",
+      "valence": -0.2,
+      "arousal": -0.6,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "smug",
+      "valence": 0.1,
+      "arousal": 0.3,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "sorry",
+      "valence": -0.4,
+      "arousal": 0.0,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "spiteful",
+      "valence": -0.6,
+      "arousal": 0.6,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "stimulated",
+      "valence": 0.5,
+      "arousal": 0.7,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "stressed",
+      "valence": -0.6,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "stubborn",
+      "valence": -0.2,
+      "arousal": 0.3,
+      "cluster": "Hostile Anger",
+      "cluster_valence_rank": 8
+    },
+    {
+      "name": "stuck",
+      "valence": -0.4,
+      "arousal": 0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "sullen",
+      "valence": -0.5,
+      "arousal": -0.2,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "surprised",
+      "valence": 0.1,
+      "arousal": 0.7,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "suspicious",
+      "valence": -0.4,
+      "arousal": 0.4,
+      "cluster": "Vigilant Suspicion",
+      "cluster_valence_rank": 7
+    },
+    {
+      "name": "sympathetic",
+      "valence": 0.5,
+      "arousal": 0.0,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "tense",
+      "valence": -0.4,
+      "arousal": 0.6,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "terrified",
+      "valence": -0.9,
+      "arousal": 0.9,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "thankful",
+      "valence": 0.8,
+      "arousal": 0.2,
+      "cluster": "Compassionate Gratitude",
+      "cluster_valence_rank": 3
+    },
+    {
+      "name": "thrilled",
+      "valence": 0.85,
+      "arousal": 0.85,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "tired",
+      "valence": -0.2,
+      "arousal": -0.6,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "tormented",
+      "valence": -0.8,
+      "arousal": 0.5,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "trapped",
+      "valence": -0.6,
+      "arousal": 0.4,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "triumphant",
+      "valence": 0.85,
+      "arousal": 0.7,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "troubled",
+      "valence": -0.5,
+      "arousal": 0.3,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "uneasy",
+      "valence": -0.4,
+      "arousal": 0.4,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "unhappy",
+      "valence": -0.6,
+      "arousal": -0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "unnerved",
+      "valence": -0.4,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "unsettled",
+      "valence": -0.4,
+      "arousal": 0.4,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "upset",
+      "valence": -0.6,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "valiant",
+      "valence": 0.6,
+      "arousal": 0.6,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "vengeful",
+      "valence": -0.7,
+      "arousal": 0.7,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "vibrant",
+      "valence": 0.75,
+      "arousal": 0.7,
+      "cluster": "Exuberant Joy",
+      "cluster_valence_rank": 1
+    },
+    {
+      "name": "vigilant",
+      "valence": 0.0,
+      "arousal": 0.5,
+      "cluster": "Vigilant Suspicion",
+      "cluster_valence_rank": 7
+    },
+    {
+      "name": "vindictive",
+      "valence": -0.7,
+      "arousal": 0.6,
+      "cluster": "Competitive Pride",
+      "cluster_valence_rank": 4
+    },
+    {
+      "name": "vulnerable",
+      "valence": -0.4,
+      "arousal": 0.2,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    },
+    {
+      "name": "weary",
+      "valence": -0.4,
+      "arousal": -0.5,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "worn out",
+      "valence": -0.4,
+      "arousal": -0.5,
+      "cluster": "Depleted Disengagement",
+      "cluster_valence_rank": 6
+    },
+    {
+      "name": "worried",
+      "valence": -0.5,
+      "arousal": 0.5,
+      "cluster": "Fear and Overwhelm",
+      "cluster_valence_rank": 9
+    },
+    {
+      "name": "worthless",
+      "valence": -0.8,
+      "arousal": -0.1,
+      "cluster": "Despair and Shame",
+      "cluster_valence_rank": 10
+    }
+  ]
+}
