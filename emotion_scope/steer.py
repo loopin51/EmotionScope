@@ -152,45 +152,45 @@ class Steerer:
         layers = layers or middle_third_layers(self.n_layers)
         texts = texts or _load_default_norm_texts()
 
-        sums = {l: 0.0 for l in layers}
-        counts = {l: 0 for l in layers}
+        sums = {layer: 0.0 for layer in layers}
+        counts = {layer: 0 for layer in layers}
 
         if self.backend == "transformer_lens":
-            hook_names = [f"blocks.{l}.hook_resid_post" for l in layers]
+            hook_names = [f"blocks.{layer}.hook_resid_post" for layer in layers]
             for text in texts:
                 tokens = self.model.to_tokens(text)
                 _, cache = self.model.run_with_cache(tokens, names_filter=lambda n: n in hook_names)
-                for l, hook_name in zip(layers, hook_names):
+                for layer, hook_name in zip(layers, hook_names):
                     resid = cache[hook_name][0]  # (seq_len, d_model)
                     norms = resid.norm(dim=-1)
-                    sums[l] += norms.sum().item()
-                    counts[l] += norms.numel()
+                    sums[layer] += norms.sum().item()
+                    counts[layer] += norms.numel()
         else:
             layers_module = get_transformer_layers(self.model)
             captured: Dict[int, torch.Tensor] = {}
 
-            def make_hook(l):
+            def make_hook(layer):
                 def hook_fn(_module, _input, output):
-                    captured[l] = (output[0] if isinstance(output, tuple) else output).detach()
+                    captured[layer] = (output[0] if isinstance(output, tuple) else output).detach()
                 return hook_fn
 
-            handles = [layers_module[l].register_forward_hook(make_hook(l)) for l in layers]
+            handles = [layers_module[layer].register_forward_hook(make_hook(layer)) for layer in layers]
             try:
                 for text in texts:
                     tokens = self.tokenizer(text, return_tensors="pt")
                     tokens = {k: v.to(self.model.device) for k, v in tokens.items()}
                     with torch.no_grad():
                         self.model(**tokens)
-                    for l in layers:
-                        resid = captured[l][0]
+                    for layer in layers:
+                        resid = captured[layer][0]
                         norms = resid.norm(dim=-1)
-                        sums[l] += norms.sum().item()
-                        counts[l] += norms.numel()
+                        sums[layer] += norms.sum().item()
+                        counts[layer] += norms.numel()
             finally:
                 for h in handles:
                     h.remove()
 
-        avg_norms = {l: (sums[l] / counts[l] if counts[l] else 0.0) for l in layers}
+        avg_norms = {layer: (sums[layer] / counts[layer] if counts[layer] else 0.0) for layer in layers}
         self._avg_norms = avg_norms
         return avg_norms
 
