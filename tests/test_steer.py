@@ -63,3 +63,45 @@ def test_steer_context_modifies_huggingface_activation():
 
     max_diff = (unsteered_logits - steered_logits).abs().max().item()
     assert max_diff > 0.1, f"steering barely changed output logits (max abs diff = {max_diff})"
+
+
+@pytest.mark.slow
+def test_compute_avg_norms_returns_positive_floats():
+    from emotion_scope.models import load_model
+    from emotion_scope.steer import Steerer, middle_third_layers
+
+    model, tokenizer, backend, info = load_model(
+        "google/gemma-2-2b-it", backend="huggingface", run_smoke_test=False
+    )
+    steerer = Steerer(model, tokenizer, backend, info)
+    layers = middle_third_layers(info["n_layers"])[:2]  # keep it fast — 2 layers only
+    norms = steerer.compute_avg_norms(texts=["The weather today is mild.", "Please open the door."], layers=layers)
+
+    assert set(norms.keys()) == set(layers)
+    for l in layers:
+        assert norms[l] > 0.0
+
+
+def test_generate_raises_for_transformer_lens_backend():
+    from emotion_scope.steer import Steerer
+
+    steerer = Steerer(model=None, tokenizer=None, backend="transformer_lens", model_info={"n_layers": 26})
+    with pytest.raises(ValueError, match="HuggingFace backend"):
+        steerer.generate("hello", vector=torch.randn(4))
+
+
+@pytest.mark.slow
+def test_generate_produces_text():
+    from emotion_scope.models import load_model
+    from emotion_scope.steer import Steerer
+
+    model, tokenizer, backend, info = load_model(
+        "google/gemma-2-2b-it", backend="huggingface", run_smoke_test=False
+    )
+    steerer = Steerer(model, tokenizer, backend, info)
+    torch.manual_seed(0)
+    vector = torch.randn(info["d_model"])
+
+    text = steerer.generate("Tell me about your day.", vector=vector, alpha=0.5, max_new_tokens=20)
+    assert isinstance(text, str)
+    assert len(text) > 0

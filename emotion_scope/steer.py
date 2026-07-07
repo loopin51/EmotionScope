@@ -104,3 +104,130 @@ def steer_context(
         finally:
             for h in handles:
                 h.remove()
+
+
+def _load_default_norm_texts() -> List[str]:
+    """Load the existing neutral-prompts corpus as the default reference dataset for avg-norm computation."""
+    path = DATA_DIR / "neutral" / "neutral_prompts.jsonl"
+    texts = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                texts.append(json.loads(line)["text"])
+    return texts
+
+
+def _format_chat_prompt(tokenizer, user_message: str) -> str:
+    messages = [{"role": "user", "content": user_message}]
+    apply = getattr(tokenizer, "apply_chat_template", None)
+    if apply is not None:
+        try:
+            return apply(messages, tokenize=False, add_generation_prompt=True)
+        except Exception:
+            pass
+    return f"User: {user_message}\n\nAssistant:"
+
+
+class Steerer:
+    """Steers a loaded model's generation using an emotion vector."""
+
+    def __init__(self, model, tokenizer, backend: str, model_info: dict):
+        self.model = model
+        self.tokenizer = tokenizer
+        self.backend = backend
+        self.model_info = model_info
+        self.n_layers: int = model_info["n_layers"]
+        self._avg_norms: Optional[Dict[int, float]] = None
+
+    def compute_avg_norms(
+        self,
+        texts: Optional[List[str]] = None,
+        layers: Optional[List[int]] = None,
+    ) -> Dict[int, float]:
+        """
+        Compute the average residual-stream L2 norm at each layer, over a
+        reference dataset. Defaults to the existing neutral-prompts corpus.
+        """
+        layers = layers or middle_third_layers(self.n_layers)
+        texts = texts or _load_default_norm_texts()
+
+        sums = {l: 0.0 for l in layers}
+        counts = {l: 0 for l in layers}
+
+        if self.backend == "transformer_lens":
+            hook_names = [f"blocks.{l}.hook_resid_post" for l in layers]
+            for text in texts:
+                tokens = self.model.to_tokens(text)
+                _, cache = self.model.run_with_cache(tokens, names_filter=lambda n: n in hook_names)
+                for l, hook_name in zip(layers, hook_names):
+                    resid = cache[hook_name][0]  # (seq_len, d_model)
+                    norms = resid.norm(dim=-1)
+                    sums[l] += norms.sum().item()
+                    counts[l] += norms.numel()
+        else:
+            layers_module = get_transformer_layers(self.model)
+            captured: Dict[int, torch.Tensor] = {}
+
+            def make_hook(l):
+                def hook_fn(_module, _input, output):
+                    captured[l] = (output[0] if isinstance(output, tuple) else output).detach()
+                return hook_fn
+
+            handles = [layers_module[l].register_forward_hook(make_hook(l)) for l in layers]
+            try:
+                for text in texts:
+                    tokens = self.tokenizer(text, return_tensors="pt")
+                    tokens = {k: v.to(self.model.device) for k, v in tokens.items()}
+                    with torch.no_grad():
+                        self.model(**tokens)
+                    for l in layers:
+                        resid = captured[l][0]
+                        norms = resid.norm(dim=-1)
+                        sums[l] += norms.sum().item()
+                        counts[l] += norms.numel()
+            finally:
+                for h in handles:
+                    h.remove()
+
+        avg_norms = {l: (sums[l] / counts[l] if counts[l] else 0.0) for l in layers}
+        self._avg_norms = avg_norms
+        return avg_norms
+
+    def generate(
+        self,
+        prompt: str,
+        vector: torch.Tensor,
+        alpha: float = 0.5,
+        layers: Optional[List[int]] = None,
+        avg_norms: Optional[Dict[int, float]] = None,
+        max_new_tokens: int = 150,
+        use_chat_template: bool = True,
+    ) -> str:
+        """Generate a steered continuation for `prompt`. HuggingFace backend only."""
+        if self.backend != "huggingface":
+            raise ValueError(
+                "Steerer.generate() requires the HuggingFace backend — "
+                "TransformerLens does not support .generate(). "
+                "Load the model with backend='huggingface', or use "
+                "steer_context() directly for a custom generation loop."
+            )
+        layers = layers or middle_third_layers(self.n_layers)
+        avg_norms = avg_norms or self._avg_norms or self.compute_avg_norms(layers=layers)
+
+        text = _format_chat_prompt(self.tokenizer, prompt) if use_chat_template else prompt
+        inputs = self.tokenizer(text, return_tensors="pt").to(self.model.device)
+
+        with steer_context(self.model, self.backend, vector, alpha, layers, avg_norms):
+            with torch.no_grad():
+                output = self.model.generate(
+                    **inputs,
+                    max_new_tokens=max_new_tokens,
+                    do_sample=True,
+                    temperature=0.8,
+                    top_p=0.9,
+                    pad_token_id=self.tokenizer.eos_token_id,
+                )
+
+        generated_ids = output[0, inputs["input_ids"].shape[1]:]
+        return self.tokenizer.decode(generated_ids, skip_special_tokens=True).strip()
