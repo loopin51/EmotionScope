@@ -98,12 +98,15 @@ def main() -> None:
         correlation_rows.append({"emotion": emotion_name, "correlation_with_elo": r})
     correlation_rows.sort(key=lambda row: (row["correlation_with_elo"] is None, row["correlation_with_elo"]))
 
+    def _fmt_corr(value: float | None) -> str:
+        return f"r={value:+.3f}" if value is not None else "r=  n/a"
+
     print("\n[preference] Top 5 negatively correlated emotions (Elo drops when active):")
     for row in correlation_rows[:5]:
-        print(f"  {row['emotion']:15s} r={row['correlation_with_elo']:+.3f}")
+        print(f"  {row['emotion']:15s} {_fmt_corr(row['correlation_with_elo'])}")
     print("[preference] Top 5 positively correlated emotions (Elo rises when active):")
     for row in correlation_rows[-5:]:
-        print(f"  {row['emotion']:15s} r={row['correlation_with_elo']:+.3f}")
+        print(f"  {row['emotion']:15s} {_fmt_corr(row['correlation_with_elo'])}")
 
     print(f"\n[preference] Running steered round-robins for: {args.steer_emotions}")
     steering_effects = []
