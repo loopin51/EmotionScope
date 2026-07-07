@@ -26,8 +26,9 @@ def test_speakers_module_loads():
     assert callable(SpeakerSeparator)
 
 
-def test_steer_stub_raises():
-    import pytest
-    from emotion_scope.steer import steer
-    with pytest.raises(NotImplementedError):
-        steer()
+def test_steer_module_loads():
+    """steer.py is now a real implementation, not a stub."""
+    from emotion_scope.steer import Steerer, steer_context, middle_third_layers
+    assert callable(Steerer)
+    assert callable(steer_context)
+    assert callable(middle_third_layers)

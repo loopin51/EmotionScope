@@ -13,6 +13,7 @@ from emotion_scope.probe import EmotionProbe, EmotionState, DualEmotionState
 from emotion_scope.visualize import scores_to_color, emotion_to_emoji
 from emotion_scope.models import load_model
 from emotion_scope.validate import Validator, ValidationResult
+from emotion_scope.steer import Steerer
 
 __all__ = [
     "__version__",
@@ -25,4 +26,5 @@ __all__ = [
     "load_model",
     "Validator",
     "ValidationResult",
+    "Steerer",
 ]
