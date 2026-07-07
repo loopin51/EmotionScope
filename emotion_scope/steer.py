@@ -48,3 +48,59 @@ def middle_third_layers(n_layers: int) -> List[int]:
     if end <= start:
         end = start + 1
     return list(range(start, end + 1))
+
+
+@contextmanager
+def steer_context(
+    model,
+    backend: str,
+    vector: torch.Tensor,
+    alpha: float,
+    layers: List[int],
+    avg_norms: Dict[int, float],
+):
+    """
+    Temporarily inject `alpha * avg_norms[layer] * v_hat` into the residual
+    stream at each layer in `layers`, for the duration of the `with` block.
+
+    Works for both TransformerLens and HuggingFace backends. Use this
+    directly (instead of Steerer.generate) inside a custom multi-turn or
+    agentic rollout loop.
+    """
+    v_hat = F.normalize(vector, dim=0)
+
+    if backend == "transformer_lens":
+        fwd_hooks = []
+        for layer in layers:
+            hook_name = f"blocks.{layer}.hook_resid_post"
+            scale = alpha * avg_norms[layer]
+
+            def make_hook(scale=scale):
+                def hook_fn(resid, hook):
+                    return resid + scale * v_hat.to(resid.dtype).to(resid.device)
+                return hook_fn
+
+            fwd_hooks.append((hook_name, make_hook()))
+        with model.hooks(fwd_hooks=fwd_hooks):
+            yield
+    else:
+        layers_module = get_transformer_layers(model)
+        handles = []
+        try:
+            for layer in layers:
+                scale = alpha * avg_norms[layer]
+
+                def make_hook(scale=scale):
+                    def hook_fn(_module, _input, output):
+                        hidden = output[0] if isinstance(output, tuple) else output
+                        steered = hidden + scale * v_hat.to(hidden.dtype).to(hidden.device)
+                        if isinstance(output, tuple):
+                            return (steered,) + output[1:]
+                        return steered
+                    return hook_fn
+
+                handles.append(layers_module[layer].register_forward_hook(make_hook()))
+            yield
+        finally:
+            for h in handles:
+                h.remove()
