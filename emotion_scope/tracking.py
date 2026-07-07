@@ -76,5 +76,9 @@ def init_run(
         return Tracker(None)
 
     import wandb
-    run = wandb.init(project=project, group=part, job_type=job_type, config=config, name=name)
+    try:
+        run = wandb.init(project=project, group=part, job_type=job_type, config=config, name=name)
+    except Exception as e:
+        print(f"[tracking] wandb.init() failed ({type(e).__name__}: {e}); continuing without tracking.")
+        return Tracker(None)
     return Tracker(run)

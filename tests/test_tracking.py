@@ -30,3 +30,24 @@ def test_is_wandb_available_returns_bool():
     from emotion_scope.tracking import is_wandb_available
 
     assert isinstance(is_wandb_available(), bool)
+
+
+def test_init_run_falls_back_to_noop_when_wandb_init_raises(monkeypatch):
+    """
+    wandb installed but misconfigured (e.g. not logged in, no network) should
+    degrade to a no-op Tracker rather than crash the caller.
+    """
+    pytest.importorskip("wandb")
+    import wandb
+    from emotion_scope.tracking import init_run
+
+    monkeypatch.delenv("WANDB_MODE", raising=False)
+
+    def _raise_init(*args, **kwargs):
+        raise RuntimeError("simulated wandb.init() failure")
+
+    monkeypatch.setattr(wandb, "init", _raise_init)
+
+    tracker = init_run(part="part0", job_type="smoke-test", config={})
+    assert tracker.enabled is False
+    tracker.log_metrics({"loss": 0.1})  # must not raise
