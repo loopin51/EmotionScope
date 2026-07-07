@@ -11,8 +11,8 @@ from emotion_scope.config import (
 
 
 def test_core_emotions_count():
-    assert len(CORE_EMOTIONS) == 20
-    assert len(CORE_EMOTION_NAMES) == 20
+    assert len(CORE_EMOTIONS) == 40
+    assert len(CORE_EMOTION_NAMES) == 40
 
 
 def test_core_emotions_fields():

@@ -87,7 +87,7 @@ class ValidationThresholds:
 
 
 # ---------------------------------------------------------------------------
-# Core emotions (20) — valence/arousal coordinates
+# Core emotions (40) — valence/arousal coordinates
 # ---------------------------------------------------------------------------
 
 # Selected to cover the valence-arousal space while including the emotions
@@ -122,6 +122,27 @@ CORE_EMOTIONS: List[dict] = [
     {"name": "enthusiastic", "valence":  0.8, "arousal":  0.9},
     {"name": "reflective",   "valence":  0.0, "arousal": -0.2},
     {"name": "gloomy",       "valence": -0.6, "arousal": -0.3},
+    # --- expansion batch (2026-07-06) — see data/emotions_171.json ---
+    {"name": "vulnerable",   "valence": -0.4,  "arousal":  0.2},
+    {"name": "playful",      "valence":  0.7,  "arousal":  0.6},
+    {"name": "exuberant",    "valence":  0.85, "arousal":  0.85},
+    {"name": "spiteful",     "valence": -0.6,  "arousal":  0.6},
+    {"name": "obstinate",    "valence": -0.3,  "arousal":  0.3},
+    {"name": "blissful",     "valence":  0.9,  "arousal":  0.5},
+    {"name": "jubilant",     "valence":  0.9,  "arousal":  0.8},
+    {"name": "ecstatic",     "valence":  0.95, "arousal":  0.9},
+    {"name": "content",      "valence":  0.6,  "arousal": -0.3},
+    {"name": "serene",       "valence":  0.7,  "arousal": -0.6},
+    {"name": "melancholy",   "valence": -0.5,  "arousal": -0.2},
+    {"name": "weary",        "valence": -0.4,  "arousal": -0.5},
+    {"name": "lonely",       "valence": -0.7,  "arousal": -0.1},
+    {"name": "furious",      "valence": -0.8,  "arousal":  0.9},
+    {"name": "irritated",    "valence": -0.4,  "arousal":  0.5},
+    {"name": "contemptuous", "valence": -0.5,  "arousal":  0.4},
+    {"name": "resentful",    "valence": -0.6,  "arousal":  0.4},
+    {"name": "terrified",    "valence": -0.9,  "arousal":  0.9},
+    {"name": "paranoid",     "valence": -0.6,  "arousal":  0.6},
+    {"name": "astonished",   "valence":  0.3,  "arousal":  0.8},
 ]
 
 CORE_EMOTION_NAMES: List[str] = [e["name"] for e in CORE_EMOTIONS]
