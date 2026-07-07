@@ -54,10 +54,10 @@ def test_implicit_scenarios_structure():
             assert e in CORE_EMOTION_NAMES
 
 
-def test_emotions_core20_json():
-    path = DATA_DIR / "emotions_core20.json"
+def test_emotions_core40_json():
+    path = DATA_DIR / "emotions_core40.json"
     assert path.exists()
     data = json.loads(path.read_text(encoding="utf-8"))
-    assert len(data) == 20
+    assert len(data) == 40
     names = {e["name"] for e in data}
     assert names == set(CORE_EMOTION_NAMES)
