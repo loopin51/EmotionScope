@@ -40,8 +40,9 @@ demo = ["gradio>=4.0"]
 viz = ["plotly>=5.0", "matplotlib>=3.8"]
 notebooks = ["jupyter>=1.0", "ipywidgets>=8.0"]
 cloud = ["google-cloud-compute>=1.0", "runpod>=1.0"]
+tracking = ["wandb>=0.16"]
 dev = ["pytest>=8.0", "ruff>=0.3"]
-all = ["emotion-scope[demo,viz,notebooks,dev]"]
+all = ["emotion-scope[demo,viz,notebooks,tracking,dev]"]
 
 [project.scripts]
 emotion-extract = "scripts.extract_all:main"
