@@ -33,6 +33,11 @@ APPROVED_EMOTIONS = {
     "frustrated", "curious", "proud", "guilty", "surprised", "loving",
     "hostile", "nervous", "confident", "brooding", "enthusiastic",
     "reflective", "gloomy",
+    # --- expansion batch (2026-07-06), see data/emotions_171.json ---
+    "vulnerable", "playful", "exuberant", "spiteful", "obstinate",
+    "blissful", "jubilant", "ecstatic", "content", "serene",
+    "melancholy", "weary", "lonely", "furious", "irritated",
+    "contemptuous", "resentful", "terrified", "paranoid", "astonished",
 }
 
 # Synonyms/derivatives to soft-check for emotion leakage
@@ -57,6 +62,26 @@ EMOTION_SYNONYMS = {
     "enthusiastic": {"enthusiastic", "enthusiastically", "enthusiasm"},
     "reflective": {"reflective", "reflectively"},
     "gloomy": {"gloomy", "gloomily", "gloominess", "gloom"},
+    "vulnerable": {"vulnerable", "vulnerably", "vulnerability"},
+    "playful": {"playful", "playfully", "playfulness"},
+    "exuberant": {"exuberant", "exuberantly", "exuberance"},
+    "spiteful": {"spiteful", "spitefully", "spite"},
+    "obstinate": {"obstinate", "obstinately", "obstinacy"},
+    "blissful": {"blissful", "blissfully", "bliss"},
+    "jubilant": {"jubilant", "jubilantly", "jubilation"},
+    "ecstatic": {"ecstatic", "ecstatically", "ecstasy"},
+    "content": {"content", "contentment", "contentedly"},
+    "serene": {"serene", "serenely", "serenity"},
+    "melancholy": {"melancholy", "melancholic", "melancholically"},
+    "weary": {"weary", "wearily", "weariness"},
+    "lonely": {"lonely", "loneliness", "lonelier"},
+    "furious": {"furious", "furiously", "fury"},
+    "irritated": {"irritated", "irritating", "irritation", "irritably"},
+    "contemptuous": {"contemptuous", "contemptuously", "contempt"},
+    "resentful": {"resentful", "resentfully", "resentment"},
+    "terrified": {"terrified", "terrifying", "terror"},
+    "paranoid": {"paranoid", "paranoia", "paranoically"},
+    "astonished": {"astonished", "astonishing", "astonishment"},
 }
 
 CONTRIBUTIONS_DIR = Path("data/story_contributions")
@@ -215,7 +240,7 @@ def main():
         marker = "OK" if count >= 50 else f"NEED {50 - count} MORE"
         print(f"  {em:14s}: {count:3d}  {bar}  [{marker}]")
 
-    total_target = 50 * 20
+    total_target = 50 * len(APPROVED_EMOTIONS)
     total_have = sum(emotion_counts.values())
     print(f"\n  Total: {total_have}/{total_target} ({total_have/total_target*100:.0f}%)")
 
