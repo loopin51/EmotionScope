@@ -84,3 +84,42 @@ def test_find_content_token_range_gemma(gemma_tokenizer):
     assert end > start
     idx = last_content_token_index(ids, gemma_tokenizer)
     assert idx == end - 1
+
+
+import torch.nn as nn
+
+
+def test_get_transformer_layers_finds_model_layers():
+    from emotion_scope.utils import get_transformer_layers
+
+    class FakeModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.model = nn.Module()
+            self.model.layers = nn.ModuleList([nn.Linear(4, 4) for _ in range(3)])
+
+    layers = get_transformer_layers(FakeModel())
+    assert len(layers) == 3
+
+
+def test_get_transformer_layers_finds_transformer_h():
+    from emotion_scope.utils import get_transformer_layers
+
+    class FakeGPT2(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.transformer = nn.Module()
+            self.transformer.h = nn.ModuleList([nn.Linear(4, 4) for _ in range(2)])
+
+    layers = get_transformer_layers(FakeGPT2())
+    assert len(layers) == 2
+
+
+def test_get_transformer_layers_raises_for_unknown_structure():
+    from emotion_scope.utils import get_transformer_layers
+
+    class FakeUnknown(nn.Module):
+        pass
+
+    with pytest.raises(ValueError):
+        get_transformer_layers(FakeUnknown())

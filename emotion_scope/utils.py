@@ -33,6 +33,32 @@ def get_device(preference: str = "auto") -> str:
 
 
 # ---------------------------------------------------------------------------
+# Transformer layer lookup — shared by extract.py-style hook code and steer.py
+# ---------------------------------------------------------------------------
+
+def get_transformer_layers(model):
+    """
+    Locate the nn.ModuleList of transformer blocks inside a HuggingFace model.
+
+    Tries the common attribute paths used by Gemma/Llama-style models
+    (model.layers), GPT-2-style models (transformer.h), and GPT-NeoX-style
+    models (gpt_neox.layers).
+    """
+    for attr_path in ("model.layers", "transformer.h", "gpt_neox.layers"):
+        obj = model
+        ok = True
+        for part in attr_path.split("."):
+            if hasattr(obj, part):
+                obj = getattr(obj, part)
+            else:
+                ok = False
+                break
+        if ok:
+            return obj
+    raise ValueError(f"Cannot find transformer layers in {type(model).__name__}")
+
+
+# ---------------------------------------------------------------------------
 # Cosine / separation metrics
 # ---------------------------------------------------------------------------
 
