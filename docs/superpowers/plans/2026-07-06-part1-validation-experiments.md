@@ -585,6 +585,10 @@ git commit -m "Implement EloTracker, compare_activities, run_full_pairwise"
 
 Runs the baseline Elo round-robin, measures per-activity emotion-probe activation, correlates the two, then re-runs the round-robin under steering for a handful of emotions to test the causal claim.
 
+> **Corrections applied during execution (2026-07-07):** The embedded code block below is the ORIGINAL draft. Two defects were found on the first real run and fixed; the on-disk `scripts/run_activity_preference.py` is authoritative:
+> 1. **Vacuous causal metric (fixed).** The draft's per-emotion `mean_elo_delta = mean(steered − baseline)` is **identically 0** because Elo is zero-sum (the 60 ratings always sum to 60×1500 before and after steering), so it carried no signal and the causal correlation was meaningless. Replaced with `steering_effect(e)` = Pearson r, across the 60 activities, between each activity's Elo shift under steering toward `e` (`steered_e − baseline`; per-activity shifts are non-zero, they only cancel in the mean) and that activity's baseline emotion-`e` probe score — i.e. "does steering toward `e` raise preference for the activities that intrinsically evoke `e`?" The cross-emotion `causal_correlation` then relates each emotion's `baseline_correlation` to its `steering_effect`. The results JSON also now stores `steered_elo` per emotion and `steer_alpha` for auditability, and Pearson calls are guarded against zero-variance (returning `null`).
+> 2. **Figure path (fixed).** Scatter figure now writes to `FIGURES_DIR` (`results/figures/`, git-tracked) instead of `METRICS_DIR` (`results/metrics/`, gitignored), so it is shipped and Task 7's existence check passes.
+
 **Files:**
 - Create: `scripts/run_activity_preference.py`
 
