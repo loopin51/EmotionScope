@@ -37,7 +37,7 @@ dependencies = [
 
 [project.optional-dependencies]
 demo = ["gradio>=4.0"]
-viz = ["plotly>=5.0", "matplotlib>=3.8"]
+viz = ["plotly>=5.0", "matplotlib>=3.8", "seaborn>=0.13"]
 notebooks = ["jupyter>=1.0", "ipywidgets>=8.0"]
 cloud = ["google-cloud-compute>=1.0", "runpod>=1.0"]
 tracking = ["wandb>=0.16"]
