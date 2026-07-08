@@ -38,6 +38,23 @@ from emotion_scope.steer import Steerer, middle_third_layers
 from emotion_scope.tracking import init_run
 
 
+# Honest caveat on the causal_correlation. The metric is non-vacuous (a true-null
+# steer yields None, not a forced value), but it is NOT a clean reproduction of the
+# paper's +0.85: (1) Elo is zero-sum and comparisons here are deterministic, so a
+# steering-induced flip can only LOWER a high-baseline-Elo activity and RAISE a low
+# one — this compression injects a component anti-correlated with baseline_correlation
+# by construction, independent of any genuine causal effect; and (2) n is only the
+# number of steered emotions (very low statistical power). Read the sign/magnitude as
+# "a strong effect is present but confounded by the round-robin design," not as a
+# faithful +0.85 replication. A compression-immune design (e.g. preference vs. a fixed
+# external reference set) is future work.
+CAUSAL_CAVEAT = (
+    "  [caveat] This is NOT a clean +0.85 reproduction: Elo is zero-sum + deterministic,\n"
+    "  so flips compress the rating spread and inject a baseline-anti-correlated term by\n"
+    "  construction; n = #steered_emotions is also tiny. Treat sign/magnitude as confounded."
+)
+
+
 def load_activities(path: Path) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -96,7 +113,12 @@ def main() -> None:
         emotion_values = [activity_scores[a["id"]][emotion_name] for a in activities]
         r = safe_pearsonr(emotion_values, elo_values)
         correlation_rows.append({"emotion": emotion_name, "correlation_with_elo": r})
-    correlation_rows.sort(key=lambda row: (row["correlation_with_elo"] is None, row["correlation_with_elo"]))
+    correlation_rows.sort(
+        key=lambda row: (
+            row["correlation_with_elo"] is None,
+            row["correlation_with_elo"] if row["correlation_with_elo"] is not None else 0.0,
+        )
+    )
 
     def _fmt_corr(value: float | None) -> str:
         return f"r={value:+.3f}" if value is not None else "r=  n/a"
@@ -153,6 +175,7 @@ def main() -> None:
         if causal_r is not None:
             print(f"\n[preference] Correlation between baseline-correlation and steering_effect: r={causal_r:+.3f}")
             print("  (paper reports r=0.85 for the analogous relationship on Claude Sonnet 4.5)")
+            print(CAUSAL_CAVEAT)
 
     fig, ax = plt.subplots(figsize=(6, 5))
     plot_pts = [e for e in steering_effects
@@ -166,6 +189,11 @@ def main() -> None:
     ax.set_xlabel("Emotion-probe correlation with baseline Elo")
     ax.set_ylabel("Steering effect (Elo-shift vs. emotion-probe correlation)")
     ax.set_title("Steering effect vs. baseline preference correlation")
+    fig.text(
+        0.5, -0.04,
+        "Caveat: causal metric confounded by Elo zero-sum compression + small n — not a clean +0.85 replication.",
+        ha="center", va="top", fontsize=7, color="gray", wrap=True,
+    )
     fig_path = FIGURES_DIR / "activity_preference_scatter.png"
     fig.savefig(fig_path, dpi=150, bbox_inches="tight")
     print(f"[preference] Saved scatter plot to {fig_path}")
@@ -179,6 +207,12 @@ def main() -> None:
         "steering_effects": steering_effects,
         "steered_elo": steered_elo_by_emotion,
         "causal_correlation": causal_r,
+        "causal_correlation_caveat": (
+            "Non-vacuous but confounded: Elo is zero-sum + comparisons deterministic, so "
+            "steering-induced flips compress the rating spread and inject a term "
+            "anti-correlated with baseline_correlation by construction; n = number of steered "
+            "emotions is small. Not a clean reproduction of the paper's +0.85."
+        ),
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(results, indent=2), encoding="utf-8")
