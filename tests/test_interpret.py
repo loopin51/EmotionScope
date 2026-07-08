@@ -1,6 +1,5 @@
 """Tests for emotion_scope.interpret — logit-lens token analysis."""
 
-import pytest
 import torch
 
 
