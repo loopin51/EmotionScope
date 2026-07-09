@@ -32,6 +32,8 @@ import seaborn as sns
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "results" / "metrics" / "activity_preference_results.json"
+CONTROLLED = ROOT / "results" / "metrics" / "causal_steering_controlled.json"
+CONTROLLED_LOW = ROOT / "results" / "metrics" / "causal_steering_controlled_lowalpha.json"
 ACTIVITIES = ROOT / "data" / "validation" / "activities.json"
 FIG_DIR = ROOT / "results" / "figures"
 
@@ -172,12 +174,57 @@ def fig_category_preferences(results: dict, cat_by_id: dict) -> None:
     print(f"wrote {out}")
 
 
+def fig_controlled_alpha_sweep() -> None:
+    """Controlled (compression-immune) causal experiment across steering strength.
+    Shows the negative result: as alpha rises, steering degenerates — every emotion
+    produces the same generic preference flip (inter-emotion delta corr -> 1), so the
+    causal correlation collapses to a mechanical -1 and is uninterpretable. No alpha
+    reaches the 'emotion-specific' zone (delta corr < 0.3)."""
+    if not (CONTROLLED.exists() and CONTROLLED_LOW.exists()):
+        print("skip alpha-sweep figure (controlled JSON(s) not found)")
+        return
+    rows = []
+    for path in (CONTROLLED_LOW, CONTROLLED):
+        blocks = json.loads(path.read_text(encoding="utf-8"))["by_alpha"]
+        for alpha, blk in blocks.items():
+            rows.append({
+                "alpha": float(alpha),
+                "inter_emotion_delta_corr": blk["inter_emotion_delta_corr"],
+                "causal_correlation": blk["causal_correlation"],
+            })
+    df = pd.DataFrame(rows).drop_duplicates("alpha").sort_values("alpha")
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    ax.axhspan(-0.3, 0.3, color="#2f9e6f", alpha=0.10)
+    ax.text(0.055, 0.18, "emotion-specific zone\n(|delta corr| < 0.3) — never reached",
+            color="#2f9e6f", fontsize=11, va="top")
+    sns.lineplot(data=df, x="alpha", y="inter_emotion_delta_corr", marker="o",
+                 markersize=11, linewidth=2.5, color="#e8543f", ax=ax, label="inter-emotion delta corr\n(1 = every emotion identical = degenerate)")
+    sns.lineplot(data=df, x="alpha", y="causal_correlation", marker="s",
+                 markersize=10, linewidth=2.0, color=ACCENT, linestyle="--", ax=ax,
+                 label="causal correlation\n(mechanically → −1 as steering degenerates)")
+    ax.axhline(0, color="#bbb", linewidth=0.8)
+    ax.set_xlabel("steering strength  α")
+    ax.set_ylabel("correlation")
+    ax.set_ylim(-1.15, 1.15)
+    ax.set_title("Controlled causal test (compression-immune): steering degenerates with α\n"
+                 "Gemma-2-2B — no α produces an emotion-specific preference shift", loc="left")
+    ax.legend(loc="center right", frameon=True, fontsize=9)
+    ax.grid(**GRID_KW)
+    fig.tight_layout()
+    out = FIG_DIR / "part1_causal_controlled_alpha_sweep.png"
+    fig.savefig(out, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    print(f"wrote {out}")
+
+
 def main() -> None:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     results, cat_by_id = _load()
     fig_baseline_correlations(results)
     fig_causal_steering(results)
     fig_category_preferences(results, cat_by_id)
+    fig_controlled_alpha_sweep()
 
 
 if __name__ == "__main__":

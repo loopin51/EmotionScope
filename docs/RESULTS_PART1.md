@@ -14,7 +14,7 @@ All figures are regenerated from `results/metrics/activity_preference_results.js
 |---|------------|---------------|------------------------|
 | 1 | **Logit-lens** | Do emotion vectors up-weight emotion-appropriate output tokens? | ✅ **Clear** — each vector promotes semantically precise tokens |
 | 2 | **Activity preference (Elo)** | Do the model's emotions predict which activities it prefers? | ✅ **Strong reproduction** of the paper's direction (Fig. 4) |
-| 3 | **Causal steering** | Does turning an emotion *on* causally shift preference? | ⚠️ **Large effect, but confounded** — `r = −0.82` vs. paper's `+0.85` (see caveat) |
+| 3 | **Causal steering** | Does turning an emotion *on* causally shift preference? | ❌ **Does not reproduce** — the `−0.82` is a compression artifact + steering degeneracy, not the paper's `+0.85` (controlled experiment below) |
 | 4 | **Steering congruence** | Does steering make generated text more emotion-congruent? | ✅ **Qualitatively decisive** (with over-steering at high α) |
 
 ---
@@ -61,17 +61,45 @@ This is the paper's core Fig. 4 finding — **the model's functional emotions tr
 
 ---
 
-## Experiment 3 — Causal steering
+## Experiment 3 — Causal steering (the one that does *not* reproduce)
 
-The decisive test in the paper is *causal*: turn an emotion vector on during the comparisons and check whether preference shifts the way the emotion's correlation predicts. We steer the whole round-robin toward one emotion at a time (α=0.5, middle-third layers) and measure, per emotion, `steering_effect` = the correlation between each activity's **Elo shift under steering** and its **baseline probe score** for that emotion.
+The decisive test in the paper is *causal*: turn an emotion vector on during the comparisons and check whether preference shifts the way the emotion's correlation predicts. This is the one experiment where the paper's result **does not reproduce** on Gemma-2-2B — and chasing down exactly *why* is, honestly, the most interesting part of Part 1. It took three passes.
 
-![Causal steering](../results/figures/part1_causal_steering.png)
+### Pass 1 — the naive result, and why it's a trap
 
-Steering has a **large, real effect** — individual activity ratings move by up to ~650 Elo points. The cross-emotion relationship is strong: **`r = −0.82`**, close in magnitude to the paper's `+0.85`… but **opposite in sign**, and that requires an honest explanation rather than a victory lap.
+Steering the whole round-robin toward one emotion at a time (α=0.5) and correlating each activity's Elo shift with its emotion-probe score gives a strong cross-emotion relationship: **`r = −0.82`** — close in magnitude to the paper's `+0.85`, but **opposite in sign**. It would be easy (and wrong) to report that as "reproduced with a sign quirk."
 
-> **⚠️ Why the sign is confounded (not a clean replication).** Elo is **zero-sum** and the comparisons here are **deterministic**, so a steering-induced flip can only *lower* an activity that was already winning (high baseline Elo) and *raise* one that was losing. This "compression" injects, into every per-activity delta, a component `≈ −(baseline_Elo − 1500)` — which is itself correlated with the emotion-probe scores. So `steering_effect` is pushed anti-correlated with `baseline_correlation` **partly by construction**, independent of any genuine causal effect. With only **n = 6 steered emotions**, the artifact plausibly dominates the sign. The metric is *non-vacuous* (a genuinely null steer returns `None`, not a forced value — verified), and the **effect is unmistakably large**, but the round-robin design cannot cleanly separate the real causal signal from the compression artifact. A compression-immune design (e.g. preference against a *fixed external reference set* rather than a closed round-robin) is the right follow-up. This caveat is emitted by the script itself (stdout, JSON, and the figure caption).
+![Causal steering (round-robin)](../results/figures/part1_causal_steering.png)
 
-**Honest verdict:** the causal *mechanism* is present and powerful on Gemma-2-2B; the specific `−0.82` should be read as "a strong effect confounded by the experimental design," not as a faithful reproduction of the paper's `+0.85`.
+### Pass 2 — a design confound: Elo compression
+
+Elo is **zero-sum** and the comparisons are **deterministic**, so a steering-induced flip can only *lower* an activity that was already winning and *raise* one that was losing. This "compression" injects a `≈ −(baseline_Elo − 1500)` component into every delta, which is anti-correlated with the probe scores **by construction**. A zero-cost re-analysis of the existing data confirms it: each activity's Elo shift is **62% explained by its baseline Elo alone** (corr −0.79), pooled slope **−1.24** ≈ the predicted −1. So a large chunk of the `−0.82` is a measurement artifact, not model behavior — and worse, the steered deltas were found to be **identical across opposite emotions** (blissful ≡ hostile), the first hint that the steering wasn't even emotion-specific.
+
+### Pass 3 — the controlled experiment: it's steering degeneracy, not the model *per se*
+
+To separate "design confound" from "model limitation," `scripts/run_causal_steering_controlled.py` re-runs the test with a **compression-immune** design: each activity is scored *independently* as its win-rate against a **fixed neutral reference set** (no zero-sum coupling), swept across steering strength α, and **gated on an emotion-specificity check** (`inter_emotion_delta_corr`: 1.0 = every emotion produces the same generic flip; 0 = emotion-specific). The gate is essential — a positive result at high delta-corr would be a spurious leak, not a real reproduction.
+
+![Controlled causal test — alpha sweep](../results/figures/part1_causal_controlled_alpha_sweep.png)
+
+| α | causal r | inter-emotion delta corr | interpretable? |
+|---|---------:|-------------------------:|----------------|
+| 0.05 | −0.85 | **0.45** | partially breaks, still confounded |
+| 0.10 | −0.98 | 0.91 | degenerate |
+| 0.20 | −1.00 | 0.99 | degenerate |
+| 0.30 | −1.00 | 1.00 | fully degenerate |
+| 0.50 | −1.00 | 1.00 | fully degenerate |
+
+The controlled design nails the mechanism: **at α ≥ 0.1, steering collapses the model's A/B preference to a content-*independent* constant** (`delta_vs_baseline_corr = −1.000` exactly, identical for every emotion), so the causal correlation is mechanically −1 and **means nothing**. Without steering the preference *is* content-sensitive (win-rate spans the full 0–1 range); steering destroys that. Lowering α to 0.05 *begins* to restore emotion-specificity (delta-corr drops to 0.45, and emotions like `calm`/`loving` start deviating from the mechanical mirror), but it **never reaches the emotion-specific zone** (delta-corr < 0.3) before hitting the win-rate resolution floor.
+
+### Honest verdict
+
+The paper's causal claim **does not reproduce on Gemma-2-2B** at any tested steering strength — and the reason is specific, not a hand-wave about model size:
+
+- The `−0.82` is **not** a faithful `+0.85` replication; it is a **compression artifact stacked on a steering degeneracy**.
+- Steering these vectors into a 2B residual stream **flattens the pairwise-preference readout** (content-independent collapse) instead of tilting it emotion-wise. This is a **method × model interaction**: the small model's preference-choice mechanism is fragile to residual steering.
+- Crucially, **the vectors themselves are fine** — the *same* vectors causally shift *free-text generation* in an emotion-specific way (Experiment 4) and up-weight the right tokens (Experiment 1). The failure is localized to the steered A/B-preference measurement, not the emotion representation.
+
+This is a genuine, well-characterized **negative result** — the kind that only shows up when you refuse to stop at a plausible-looking number. A compression-immune design *plus* a finer-grained preference readout (more references; or free-form preference rather than a single A/B logit) on a larger model is the path to actually testing the paper's causal claim.
 
 ---
 
@@ -107,12 +135,16 @@ uv run python scripts/run_activity_preference.py \
     --vectors results/vectors/google_gemma-2-2b-it.pt \
     --steer-emotions blissful hostile desperate calm loving furious
 
-# 3. Steering congruence (Exp. 4)
+# 3. Controlled causal test (Exp. 3, Pass 3) — compression-immune, alpha-swept
+uv run python scripts/run_causal_steering_controlled.py \
+    --vectors results/vectors/google_gemma-2-2b-it.pt --alphas 0.3 0.5
+
+# 4. Steering congruence (Exp. 4)
 uv run python scripts/check_steering_congruence.py \
     --vectors results/vectors/google_gemma-2-2b-it.pt \
     --emotions desperate calm furious blissful --alpha 0.4
 
-# 4. Regenerate the figures in this document (no GPU / torch needed)
+# 5. Regenerate the figures in this document (no GPU / torch needed)
 uv run --no-project --with seaborn --with pandas --with matplotlib \
     python scripts/plot_part1_results.py
 ```
@@ -120,6 +152,8 @@ uv run --no-project --with seaborn --with pandas --with matplotlib \
 ## Limitations
 
 - **Model scale.** Gemma-2-2B is far smaller than the paper's Claude Sonnet 4.5; token-level noise and over-steering are more pronounced.
-- **Causal metric confound.** The round-robin Elo design cannot cleanly isolate the causal sign (Experiment 3 caveat). Treat the magnitude, not the sign, as the takeaway.
-- **Whole-round-robin steering.** We steer every comparison uniformly rather than the paper's per-activity steered/control split — a deliberate simplification, documented in `emotion_scope/preference.py`.
+- **Causal steering does not reproduce (Experiment 3).** Two stacked problems — a zero-sum Elo *compression* artifact and, more fundamentally, *steering degeneracy* (the A/B preference readout collapses to content-independent under steering on this model at every tested α). The emotion vectors are causal for *generation* (Exp. 4) but not for the steered *preference* measurement here.
+- **Preference readout resolution.** Win-rate against 8 references is quantized (1/16 steps), which caps how small an emotion-specific effect can be detected — relevant to the α=0.05 "partially breaks" result.
+- **Whole-round-robin steering.** The Pass-1 experiment steers every comparison uniformly rather than the paper's per-activity steered/control split — a deliberate simplification, documented in `emotion_scope/preference.py`.
+- **Small n for the cross-emotion test.** 6–14 steered emotions feed the causal correlation.
 - **Small n for the cross-emotion test.** Only 6 steered emotions feed the causal correlation.
